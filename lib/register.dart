@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:lawlink/login.dart';
 
 class AppColors {
   static const tombolLogin = Color.fromRGBO(255, 0, 0, 1.0); // Merah solid
@@ -66,6 +67,8 @@ class RegisterScreen extends StatelessWidget {
                         'Daftar',
                         style: TextStyle(
                           fontSize: 25,
+                          fontWeight:
+                              FontWeight.bold, // Menjadikan teks menjadi bold
                           color: AppColors
                               .hitam, // Menggunakan warna hitam dari styles.dart
                         ),
@@ -84,19 +87,23 @@ class RegisterScreen extends StatelessWidget {
                       ),
                       children: [
                         TextSpan(
-                          text: 'Login',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.blue, // Warna biru
-                            fontStyle: FontStyle.italic, // Gaya miring
-                            decoration: TextDecoration.underline, // Garis bawah
-                          ),
-                          // Definisikan aksi yang akan dilakukan ketika teks "Login" ditekan
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              // Aksi yang dijalankan saat teks "Login" ditekan
-                            },
-                        ),
+                            text: 'Login',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.blue, // Warna biru
+                              fontStyle: FontStyle.italic, // Gaya miring
+                              decoration:
+                                  TextDecoration.underline, // Garis bawah
+                            ),
+                            // Definisikan aksi yang akan dilakukan ketika teks "Login" ditekan
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()),
+                                );
+                              }),
                       ],
                     ),
                   ),
@@ -123,7 +130,7 @@ class RegisterScreen extends StatelessWidget {
         obscureText: isPassword,
         decoration: InputDecoration(
           border: InputBorder.none,
-          labelText: labelText,
+          hintText: labelText, // Menggunakan labelText sebagai hintText
         ),
       ),
     );
