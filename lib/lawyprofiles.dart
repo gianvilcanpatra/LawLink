@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'lawyprofiles.dart';
+import 'berandachat.dart';
+import 'userProfiles.dart';
 
 class Lawyer {
   final String name;
@@ -117,67 +120,82 @@ class LawyerProfilePage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Color.fromARGB(255, 238, 17, 1), // Atur warna latar belakang menjadi merah
+        color: Color.fromARGB(
+            255, 238, 17, 1), // Atur warna latar belakang menjadi merah
         padding: EdgeInsets.zero, // Hapus padding default
-        child : Row(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-          MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: () {
-                // Tambahkan logika untuk menavigasi ke halaman yang diinginkan
-              },
-              child: Image.asset(
-                'images/home.png', // Ganti 'images/home.png' dengan path gambar Anda
-                width: 35, // Ganti nilai sesuai dengan lebar yang diinginkan
-                height: 35, // Ganti nilai sesuai dengan tinggi yang diinginkan
-                fit: BoxFit.contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () {
+                  // Tambahkan logika untuk menavigasi ke halaman yang diinginkan
+                },
+                child: Image.asset(
+                  'images/home.png', // Ganti 'images/home.png' dengan path gambar Anda
+                  width: 35, // Ganti nilai sesuai dengan lebar yang diinginkan
+                  height:
+                      35, // Ganti nilai sesuai dengan tinggi yang diinginkan
+                  fit: BoxFit
+                      .contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+                ),
               ),
             ),
-          ),
-          MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: () {
-                // Tambahkan logika untuk menavigasi ke halaman yang diinginkan
-              },
-              child: Image.asset(
-                'images/chat.png', // Ganti 'images/home.png' dengan path gambar Anda
-                width: 50, // Ganti nilai sesuai dengan lebar yang diinginkan
-                height: 50, // Ganti nilai sesuai dengan tinggi yang diinginkan
-                fit: BoxFit.contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LawyerChatPage()),
+                  );
+                },
+                child: Image.asset(
+                  'images/chat.png', // Ganti 'images/home.png' dengan path gambar Anda
+                  width: 50, // Ganti nilai sesuai dengan lebar yang diinginkan
+                  height:
+                      50, // Ganti nilai sesuai dengan tinggi yang diinginkan
+                  fit: BoxFit
+                      .contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+                ),
               ),
             ),
-          ),
-          MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: () {
-                // Tambahkan logika untuk menavigasi ke halaman yang diinginkan
-              },
-              child: Image.asset(
-                'images/notif.png', // Ganti 'images/home.png' dengan path gambar Anda
-                width: 35, // Ganti nilai sesuai dengan lebar yang diinginkan
-                height: 35, // Ganti nilai sesuai dengan tinggi yang diinginkan
-                fit: BoxFit.contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () {
+                  // Tambahkan logika untuk menavigasi ke halaman yang diinginkan
+                },
+                child: Image.asset(
+                  'images/notif.png', // Ganti 'images/home.png' dengan path gambar Anda
+                  width: 35, // Ganti nilai sesuai dengan lebar yang diinginkan
+                  height:
+                      35, // Ganti nilai sesuai dengan tinggi yang diinginkan
+                  fit: BoxFit
+                      .contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+                ),
               ),
             ),
-          ),
-          MouseRegion(
-            cursor: SystemMouseCursors.click,
-            child: GestureDetector(
-              onTap: () {
-                // Tambahkan logika untuk menavigasi ke halaman yang diinginkan
-              },
-              child: Image.asset(
-                'images/profile.png', // Ganti 'images/home.png' dengan path gambar Anda
-                width: 35, // Ganti nilai sesuai dengan lebar yang diinginkan
-                height: 35, // Ganti nilai sesuai dengan tinggi yang diinginkan
-                fit: BoxFit.contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UserProfile()),
+                  );
+                },
+                child: Image.asset(
+                  'images/profile.png', // Ganti 'images/home.png' dengan path gambar Anda
+                  width: 35, // Ganti nilai sesuai dengan lebar yang diinginkan
+                  height:
+                      35, // Ganti nilai sesuai dengan tinggi yang diinginkan
+                  fit: BoxFit
+                      .contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+                ),
               ),
             ),
-          ),
           ],
         ),
       ),

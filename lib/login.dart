@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'register.dart';
+import 'lawyprofiles.dart';
 
 class AppColors {
   static const tombolLogin = Color.fromRGBO(255, 0, 0, 1.0); // Merah solid
@@ -43,7 +44,11 @@ class LoginScreen extends StatelessWidget {
                     SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () {
-                        // Aksi yang dijalankan saat tombol ditekan
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => LawyerProfilePage()),
+                        );
                       },
                       style: ElevatedButton.styleFrom(
                         primary: AppColors.tombolLogin,
