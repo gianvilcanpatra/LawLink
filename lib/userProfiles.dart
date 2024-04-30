@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'lawyprofiles.dart';
+import 'berandachat.dart';
+import 'userProfiles.dart';
 
 // void main() {
 //   runApp(UserProfile());
@@ -57,7 +60,11 @@ class UserProfile extends StatelessWidget {
                 cursor: SystemMouseCursors.click,
                 child: GestureDetector(
                   onTap: () {
-                    // Tambahkan logika untuk menavigasi ke halaman yang diinginkan
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => LawyerProfilePage()),
+                    );
                   },
                   child: Image.asset(
                     'images/home.png', // Ganti 'images/home.png' dengan path gambar Anda
@@ -74,7 +81,10 @@ class UserProfile extends StatelessWidget {
                 cursor: SystemMouseCursors.click,
                 child: GestureDetector(
                   onTap: () {
-                    // Tambahkan logika untuk menavigasi ke halaman yang diinginkan
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => LawyerChatPage()),
+                    );
                   },
                   child: Image.asset(
                     'images/chat.png', // Ganti 'images/home.png' dengan path gambar Anda
