@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'berandachat.dart';
 
 class Lawyer {
   final String name;
@@ -140,7 +141,10 @@ class LawyerProfilePage extends StatelessWidget {
             cursor: SystemMouseCursors.click,
             child: GestureDetector(
               onTap: () {
-                // Tambahkan logika untuk menavigasi ke halaman yang diinginkan
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LawyerChatPage()),
+                );
               },
               child: Image.asset(
                 'images/chat.png', // Ganti 'images/home.png' dengan path gambar Anda
