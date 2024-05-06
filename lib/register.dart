@@ -19,7 +19,6 @@ class RegisterScreen extends StatelessWidget {
         uri,
         body: json.encode({
           'name': nameController.text.trim(),
-          // 'username': usernameController.text.trim(),
           'email': emailController.text.trim(),
           'password': passwordController.text.trim(),
         }),

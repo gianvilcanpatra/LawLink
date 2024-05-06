@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'register.dart';
 import 'lawyprofiles.dart';
 
@@ -9,7 +11,43 @@ class AppColors {
 }
 
 class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key? key});
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  LoginScreen({Key? key}) : super(key: key);
+
+  Future<void> _handleLogin(BuildContext context) async {
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:8000/api/login'),
+        body: json.encode({
+          'email': emailController.text.trim(),
+          'password': passwordController.text.trim(),
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LawyerProfilePage()),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text('Login gagal. Cek kembali email dan password Anda.')),
+        );
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Terjadi kesalahan. Silakan coba lagi nanti.')),
+      );
+      print('Error: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,17 +76,14 @@ class LoginScreen extends StatelessWidget {
                           TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 30),
-                    _buildInputBox('Email / Username', screenWidth),
+                    _buildInputBox('Email', screenWidth, emailController),
                     SizedBox(height: 30),
-                    _buildInputBox('Password', screenWidth, isPassword: true),
+                    _buildInputBox('Password', screenWidth, passwordController,
+                        isPassword: true),
                     SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => LawyerProfilePage()),
-                        );
+                        _handleLogin(context);
                       },
                       style: ElevatedButton.styleFrom(
                         primary: AppColors.tombolLogin,
@@ -104,7 +139,8 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildInputBox(String labelText, double screenWidth,
+  Widget _buildInputBox(
+      String labelText, double screenWidth, TextEditingController controller,
       {bool isPassword = false}) {
     return Container(
       width: screenWidth * 0.8,
@@ -116,6 +152,7 @@ class LoginScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: TextField(
+        controller: controller,
         obscureText: isPassword,
         style: TextStyle(fontSize: 20), // Memperbesar font input box
         decoration: InputDecoration(
