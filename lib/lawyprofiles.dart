@@ -2,30 +2,37 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'userProfiles.dart';
+import 'detailLawyer.dart';
 
 class Lawyer {
+  final int id;
   final String name;
   final String pendidikan;
   final String semester;
   final String statuskelulusan;
+  final String deskripsi;
   // final String img;
   // final String harga;
 
   Lawyer({
+    required this.id,
     required this.name,
     required this.pendidikan,
     required this.semester,
     required this.statuskelulusan,
+    required this.deskripsi,
     // required this.img,
     // required this.harga,
   });
 
   factory Lawyer.fromJson(Map<String, dynamic> json) {
     return Lawyer(
+      id: json['id'],
       name: json['name'],
       pendidikan: json['pendidikan'],
       semester: json['semester'],
       statuskelulusan: json['statuskelulusan'],
+      deskripsi: json['deskripsi'],
       // img: json['img'],
       // harga: json['harga'],
     );
@@ -133,7 +140,10 @@ class _LawyerProfilePageState extends State<LawyerProfilePage> {
                         },
                       ),
                       onTap: () {
-                        // Handle tapping on a lawyer profile
+                        Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => DetailLawyer(lawyer: lawyer)),
+                        );
                       },
                     ),
                   ),
