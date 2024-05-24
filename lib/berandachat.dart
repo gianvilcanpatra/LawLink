@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'lawyprofiles.dart';
+import 'package:provider/provider.dart';
 import 'userProfiles.dart';
+import 'lawyprofiles.dart';
+import 'providers/auth_provider.dart';
 
 class Lawyer {
   final String name;
@@ -28,6 +30,8 @@ class LawyerChatPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       appBar: AppBar(),
       body: Column(
@@ -108,7 +112,7 @@ class LawyerChatPage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            LawyerProfilePage()), // Navigasi ke halaman hh.dart
+                            LawyerProfilePage()),
                   );
                 },
                 child: Image.asset(
@@ -159,7 +163,9 @@ class LawyerChatPage extends StatelessWidget {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => UserProfile()),
+                    MaterialPageRoute(
+                      builder: (context) => UserProfile(authToken: authProvider.token!),
+                    ),
                   );
                 },
                 child: Image.asset(

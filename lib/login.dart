@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'register.dart';
-import 'lawyprofiles.dart';
+import 'userProfiles.dart';
+import '../providers/auth_provider.dart';
 
 class AppColors {
   static const tombolLogin = Color.fromRGBO(255, 0, 0, 1.0); // Merah solid
@@ -18,29 +18,19 @@ class LoginScreen extends StatelessWidget {
 
   Future<void> _handleLogin(BuildContext context) async {
     try {
-      final response = await http.post(
-        Uri.parse('http://localhost:8000/api/login'),
-        body: json.encode({
-          'email': emailController.text.trim(),
-          'password': passwordController.text.trim(),
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      await Provider.of<AuthProvider>(context, listen: false).login(
+        emailController.text.trim(),
+        passwordController.text.trim(),
       );
 
-      if (response.statusCode == 200) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => LawyerProfilePage()),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text('Login gagal. Cek kembali email dan password Anda.')),
-        );
-      }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UserProfile(
+            authToken: Provider.of<AuthProvider>(context, listen: false).token!,
+          ),
+        ),
+      );
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Terjadi kesalahan. Silakan coba lagi nanti.')),
@@ -122,7 +112,8 @@ class LoginScreen extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => RegisterScreen()),
+                                      builder: (context) => RegisterScreen()
+                                  ),
                                 );
                               },
                           ),
@@ -140,8 +131,11 @@ class LoginScreen extends StatelessWidget {
   }
 
   Widget _buildInputBox(
-      String labelText, double screenWidth, TextEditingController controller,
-      {bool isPassword = false}) {
+      String labelText,
+      double screenWidth,
+      TextEditingController controller, {
+        bool isPassword = false
+      }) {
     return Container(
       width: screenWidth * 0.8,
       height: 80, // Menyesuaikan tinggi input box

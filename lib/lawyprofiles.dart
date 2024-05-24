@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'userProfiles.dart';
 import 'detailLawyer.dart';
+import 'providers/auth_provider.dart';
 
 class Lawyer {
   final int id;
@@ -11,8 +13,6 @@ class Lawyer {
   final String semester;
   final String statuskelulusan;
   final String deskripsi;
-  // final String img;
-  // final String harga;
 
   Lawyer({
     required this.id,
@@ -21,8 +21,6 @@ class Lawyer {
     required this.semester,
     required this.statuskelulusan,
     required this.deskripsi,
-    // required this.img,
-    // required this.harga,
   });
 
   factory Lawyer.fromJson(Map<String, dynamic> json) {
@@ -33,8 +31,6 @@ class Lawyer {
       semester: json['semester'],
       statuskelulusan: json['statuskelulusan'],
       deskripsi: json['deskripsi'],
-      // img: json['img'],
-      // harga: json['harga'],
     );
   }
 }
@@ -58,20 +54,17 @@ class LawyerProfilePage extends StatefulWidget {
 
 class _LawyerProfilePageState extends State<LawyerProfilePage> {
   late Future<List<Lawyer>> _futureLawyers;
-  late User user; // Tambahkan variabel user
+  late User user;
 
   @override
   void initState() {
     super.initState();
     _futureLawyers = fetchLawyers();
-    user = User(
-        name:
-            'User'); // Inisialisasi user, Anda perlu mengambil nama pengguna yang sebenarnya dari backend
+    user = User(name: 'User');
   }
 
   Future<List<Lawyer>> fetchLawyers() async {
-    final response =
-        await http.get(Uri.parse('http://localhost:8000/api/lawyers'));
+    final response = await http.get(Uri.parse('http://localhost:8000/api/lawyers'));
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       final List<dynamic> lawyerData = data['lawyers'];
@@ -83,6 +76,8 @@ class _LawyerProfilePageState extends State<LawyerProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+
     return Scaffold(
       appBar: AppBar(),
       body: FutureBuilder<List<Lawyer>>(
@@ -109,14 +104,6 @@ class _LawyerProfilePageState extends State<LawyerProfilePage> {
                       leading: CircleAvatar(
                         backgroundColor: Colors.grey,
                         radius: 40,
-                        child: ClipOval(
-                            // child: Image.network(
-                            //   // lawyer.img,
-                            //   fit: BoxFit.cover,
-                            //   width: 100,
-                            //   height: 100,
-                            // ),
-                            ),
                       ),
                       title: Text(lawyer.name),
                       subtitle: Column(
@@ -128,7 +115,6 @@ class _LawyerProfilePageState extends State<LawyerProfilePage> {
                           Text(lawyer.statuskelulusan),
                           Padding(
                             padding: const EdgeInsets.symmetric(vertical: 10.0),
-                            // child: Text(lawyer.harga),
                           ),
                         ],
                       ),
@@ -136,13 +122,12 @@ class _LawyerProfilePageState extends State<LawyerProfilePage> {
                         icon: Icon(Icons.chat),
                         onPressed: () {
                           // Navigate to chat page
-                          // You can add navigation logic here
                         },
                       ),
                       onTap: () {
                         Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => DetailLawyer(lawyer: lawyer)),
+                          context,
+                          MaterialPageRoute(builder: (context) => DetailLawyer(lawyer: lawyer)),
                         );
                       },
                     ),
@@ -154,9 +139,7 @@ class _LawyerProfilePageState extends State<LawyerProfilePage> {
         },
       ),
       bottomNavigationBar: BottomAppBar(
-        color: Color.fromARGB(
-            255, 238, 17, 1), // Atur warna latar belakang menjadi merah
-        padding: EdgeInsets.zero, // Hapus padding default
+        color: Color.fromARGB(255, 238, 17, 1),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
@@ -166,18 +149,14 @@ class _LawyerProfilePageState extends State<LawyerProfilePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            LawyerProfilePage()), // Navigasi ke halaman hh.dart
+                    MaterialPageRoute(builder: (context) => LawyerProfilePage()),
                   );
                 },
                 child: Image.asset(
-                  'images/home.png', // Ganti 'images/home.png' dengan path gambar Anda
-                  width: 35, // Ganti nilai sesuai dengan lebar yang diinginkan
-                  height:
-                      35, // Ganti nilai sesuai dengan tinggi yang diinginkan
-                  fit: BoxFit
-                      .contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+                  'images/home.png',
+                  width: 35,
+                  height: 35,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
@@ -185,15 +164,13 @@ class _LawyerProfilePageState extends State<LawyerProfilePage> {
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: () {
-                  // Tambahkan logika untuk menavigasi ke halaman yang diinginkan
+                  // Navigate to chat page
                 },
                 child: Image.asset(
-                  'images/chat.png', // Ganti 'images/home.png' dengan path gambar Anda
-                  width: 50, // Ganti nilai sesuai dengan lebar yang diinginkan
-                  height:
-                      50, // Ganti nilai sesuai dengan tinggi yang diinginkan
-                  fit: BoxFit
-                      .contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+                  'images/chat.png',
+                  width: 50,
+                  height: 50,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
@@ -201,15 +178,13 @@ class _LawyerProfilePageState extends State<LawyerProfilePage> {
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: () {
-                  // Tambahkan logika untuk menavigasi ke halaman yang diinginkan
+                  // Navigate to notification page
                 },
                 child: Image.asset(
-                  'images/notif.png', // Ganti 'images/home.png' dengan path gambar Anda
-                  width: 35, // Ganti nilai sesuai dengan lebar yang diinginkan
-                  height:
-                      35, // Ganti nilai sesuai dengan tinggi yang diinginkan
-                  fit: BoxFit
-                      .contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+                  'images/notif.png',
+                  width: 35,
+                  height: 35,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),
@@ -219,16 +194,16 @@ class _LawyerProfilePageState extends State<LawyerProfilePage> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => UserProfile()),
+                    MaterialPageRoute(
+                      builder: (context) => UserProfile(authToken: authProvider.token!),
+                    ),
                   );
                 },
                 child: Image.asset(
-                  'images/profile.png', // Ganti 'images/home.png' dengan path gambar Anda
-                  width: 35, // Ganti nilai sesuai dengan lebar yang diinginkan
-                  height:
-                      35, // Ganti nilai sesuai dengan tinggi yang diinginkan
-                  fit: BoxFit
-                      .contain, // Mengatur bagaimana gambar diatur dalam kotak yang diberikan
+                  'images/profile.png',
+                  width: 35,
+                  height: 35,
+                  fit: BoxFit.contain,
                 ),
               ),
             ),

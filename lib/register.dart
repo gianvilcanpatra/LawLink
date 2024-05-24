@@ -3,7 +3,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'login.dart';
-import 'styles.dart';
 
 class RegisterScreen extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();

@@ -1,22 +1,29 @@
 import 'package:flutter/material.dart';
-
-import 'register.dart';
+import 'package:provider/provider.dart';
 import 'login.dart';
+import 'providers/auth_provider.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+      ],
+      child: MyApp(),
+    ),);
 }
 
 class MyApp extends StatelessWidget {
-  // Removed 'const' keyword from the constructor
-  const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      // home: RegisterScreen(),
-      home: LoginScreen(),
+    return ChangeNotifierProvider(
+      create: (ctx) => AuthProvider(),
+      child: MaterialApp(
+        title: 'LawLink',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: LoginScreen(),
+      ),
     );
   }
 }
