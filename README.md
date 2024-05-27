@@ -1,5 +1,18 @@
 # lawlink
 
+Identitas :
+1. Gian Vilcan Patra | 221511012
+2. M Naufal Fadil Aziz | 221511016
+3. Arya Putra Kusumah | 221511044
+
+How To Run Project
+1. Active kan dulu php my admin serta buatkan databasenya
+2. Buka project laravel backend nya lalu run
+3. Buka project flutter frontend nya lalu run
+
+
+
+
 A new Flutter project.
 
 ## Getting Started
