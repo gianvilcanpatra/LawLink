@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
       create: (context) => AuthModel(),
       child: MaterialApp(
         navigatorKey: navigatorKey,
-        title: 'Flutter Doctor App',
+        title: 'Flutter Lawyer App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           //pre-define input decoration
