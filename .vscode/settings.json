@@ -1,3 +1,7 @@
 {
+<<<<<<< HEAD
     "cmake.sourceDirectory": "${workspaceFolder}/windows/flutter"
+=======
+    "cmake.sourceDirectory": "C:/Kuliah/Semester4/Proyek4/LawLink/linux"
+>>>>>>> 0f7ec794332b9db83fb6f740ced4b76beb13a743
 }
