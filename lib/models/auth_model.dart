@@ -7,8 +7,8 @@ class AuthModel extends ChangeNotifier {
   Map<String, dynamic> user = {}; //update user details when login
   Map<String, dynamic> appointment =
       {}; //update upcoming appointment when login
-  List<Map<String, dynamic>> favDoc = []; //get latest favorite doctor
-  List<dynamic> _fav = []; //get all fav doctor id in list
+  List<Map<String, dynamic>> favLaw = []; //get latest favorite lawyer
+  List<dynamic> _fav = []; //get all fav lawyer id in list
 
   bool get isLogin {
     return _isLogin;
@@ -32,19 +32,19 @@ class AuthModel extends ChangeNotifier {
     notifyListeners();
   }
 
-//and this is to return latest favorite doctor list
-  List<Map<String, dynamic>> get getFavDoc {
-    favDoc.clear(); //clear all previous record before get latest list
+//and this is to return latest favorite lawyer list
+  List<Map<String, dynamic>> get getFavLaw {
+    favLaw.clear(); //clear all previous record before get latest list
 
-    //list out doctor list according to favorite list
+    //list out lawyer list according to favorite list
     for (var num in _fav) {
-      for (var doc in user['doctor']) {
-        if (num == doc['doc_id']) {
-          favDoc.add(doc);
+      for (var law in user['lawyer']) {
+        if (num == law['law_id']) {
+          favLaw.add(law);
         }
       }
     }
-    return favDoc;
+    return favLaw;
   }
 
 //when login success, update the status

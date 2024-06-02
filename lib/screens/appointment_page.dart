@@ -1,5 +1,5 @@
-import 'package:doctor_appointment_app/providers/dio_provider.dart';
-import 'package:doctor_appointment_app/utils/config.dart';
+import 'package:lawyer_appointment_app/providers/dio_provider.dart';
+import 'package:lawyer_appointment_app/utils/config.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -158,7 +158,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                             children: [
                               CircleAvatar(
                                 backgroundImage: NetworkImage(
-                                    "http://127.0.0.1:8000${schedule['doctor_profile']}"),
+                                    "http://127.0.0.1:8000${schedule['lawyer_profile']}"),
                               ),
                               const SizedBox(
                                 width: 10,
@@ -167,7 +167,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    schedule['doctor_name'],
+                                    schedule['lawyer_name'],
                                     style: const TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w700,

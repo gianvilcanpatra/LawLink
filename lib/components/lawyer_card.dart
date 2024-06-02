@@ -1,16 +1,16 @@
-import 'package:doctor_appointment_app/main.dart';
-import 'package:doctor_appointment_app/screens/doctor_details.dart';
-import 'package:doctor_appointment_app/utils/config.dart';
+import 'package:lawyer_appointment_app/main.dart';
+import 'package:lawyer_appointment_app/screens/lawyer_details.dart';
+import 'package:lawyer_appointment_app/utils/config.dart';
 import 'package:flutter/material.dart';
 
-class DoctorCard extends StatelessWidget {
-  const DoctorCard({
+class LawyerCard extends StatelessWidget {
+  const LawyerCard({
     Key? key,
-    required this.doctor,
+    required this.lawyer,
     required this.isFav,
   }) : super(key: key);
 
-  final Map<String, dynamic> doctor;
+  final Map<String, dynamic> lawyer;
   final bool isFav;
 
   @override
@@ -28,7 +28,7 @@ class DoctorCard extends StatelessWidget {
               SizedBox(
                 width: Config.widthSize * 0.33,
                 child: Image.network(
-                  'assets/doctor_3.jpg',
+                  'assets/lawyer_3.jpg',
                   fit: BoxFit.fill,
                 ),
               ),
@@ -40,14 +40,14 @@ class DoctorCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        "${doctor['doctor_name']}",
+                        "${lawyer['lawyer_name']}",
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       Text(
-                        "${doctor['category']}",
+                        "${lawyer['category']}",
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.normal,
@@ -89,8 +89,8 @@ class DoctorCard extends StatelessWidget {
         onTap: () {
           //pass the details to detail page
           MyApp.navigatorKey.currentState!.push(MaterialPageRoute(
-              builder: (_) => DoctorDetails(
-                    doctor: doctor,
+              builder: (_) => LawyerDetails(
+                    lawyer: lawyer,
                     isFav: isFav,
                   )));
         },

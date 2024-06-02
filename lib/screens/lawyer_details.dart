@@ -1,30 +1,30 @@
-import 'package:doctor_appointment_app/components/button.dart';
-import 'package:doctor_appointment_app/models/auth_model.dart';
-import 'package:doctor_appointment_app/providers/dio_provider.dart';
-import 'package:doctor_appointment_app/utils/config.dart';
+import 'package:lawyer_appointment_app/components/button.dart';
+import 'package:lawyer_appointment_app/models/auth_model.dart';
+import 'package:lawyer_appointment_app/providers/dio_provider.dart';
+import 'package:lawyer_appointment_app/utils/config.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../components//custom_appbar.dart';
 
-class DoctorDetails extends StatefulWidget {
-  const DoctorDetails({Key? key, required this.doctor, required this.isFav})
+class LawyerDetails extends StatefulWidget {
+  const LawyerDetails({Key? key, required this.lawyer, required this.isFav})
       : super(key: key);
-  final Map<String, dynamic> doctor;
+  final Map<String, dynamic> lawyer;
   final bool isFav;
 
   @override
-  State<DoctorDetails> createState() => _DoctorDetailsState();
+  State<LawyerDetails> createState() => _LawyerDetailsState();
 }
 
-class _DoctorDetailsState extends State<DoctorDetails> {
-  Map<String, dynamic> doctor = {};
+class _LawyerDetailsState extends State<LawyerDetails> {
+  Map<String, dynamic> lawyer = {};
   bool isFav = false;
 
   @override
   void initState() {
-    doctor = widget.doctor;
+    lawyer = widget.lawyer;
     isFav = widget.isFav;
     super.initState();
   }
@@ -38,18 +38,18 @@ class _DoctorDetailsState extends State<DoctorDetails> {
         actions: [
           //Favarite Button
           IconButton(
-            //press this button to add/remove favorite doctor
+            //press this button to add/remove favorite lawyer
             onPressed: () async {
               //get latest favorite list from auth model
               final list =
                   Provider.of<AuthModel>(context, listen: false).getFav;
 
-              //if doc id is already exist, mean remove the doc id
-              if (list.contains(doctor['doc_id'])) {
-                list.removeWhere((id) => id == doctor['doc_id']);
+              //if law id is already exist, mean remove the law id
+              if (list.contains(lawyer['law_id'])) {
+                list.removeWhere((id) => id == lawyer['law_id']);
               } else {
-                //else, add new doctor to favorite list
-                list.add(doctor['doc_id']);
+                //else, add new lawyer to favorite list
+                list.add(lawyer['law_id']);
               }
 
               //update the list into auth model and notify all widgets
@@ -61,7 +61,7 @@ class _DoctorDetailsState extends State<DoctorDetails> {
 
               if (token.isNotEmpty && token != '') {
                 //update the favorite list into database
-                final response = await DioProvider().storeFavDoc(token, list);
+                final response = await DioProvider().storeFavLaw(token, list);
                 //if insert successfully, then change the favorite status
 
                 if (response == 200) {
@@ -81,11 +81,11 @@ class _DoctorDetailsState extends State<DoctorDetails> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            AboutDoctor(
-              doctor: doctor,
+            AboutLawyer(
+              lawyer: lawyer,
             ),
             DetailBody(
-              doctor: doctor,
+              lawyer: lawyer,
             ),
             const Spacer(),
             Padding(
@@ -95,7 +95,7 @@ class _DoctorDetailsState extends State<DoctorDetails> {
                 title: 'Book Appointment',
                 onPressed: () {
                   Navigator.of(context).pushNamed('booking_page',
-                      arguments: {"doctor_id": doctor['doc_id']});
+                      arguments: {"lawyer_id": lawyer['law_id']});
                 },
                 disable: false,
               ),
@@ -107,10 +107,10 @@ class _DoctorDetailsState extends State<DoctorDetails> {
   }
 }
 
-class AboutDoctor extends StatelessWidget {
-  const AboutDoctor({Key? key, required this.doctor}) : super(key: key);
+class AboutLawyer extends StatelessWidget {
+  const AboutLawyer({Key? key, required this.lawyer}) : super(key: key);
 
-  final Map<dynamic, dynamic> doctor;
+  final Map<dynamic, dynamic> lawyer;
 
   @override
   Widget build(BuildContext context) {
@@ -122,13 +122,13 @@ class AboutDoctor extends StatelessWidget {
           CircleAvatar(
             radius: 65.0,
             backgroundImage: NetworkImage(
-              "http://127.0.0.1:8000${doctor['doctor_profile']}",
+              "http://127.0.0.1:8000${lawyer['lawyer_profile']}",
             ),
             backgroundColor: Colors.white,
           ),
           Config.spaceMedium,
           Text(
-            "Dr ${doctor['doctor_name']}",
+            "Mr ${lawyer['lawyer_name']}",
             style: const TextStyle(
               color: Colors.black,
               fontSize: 24.0,
@@ -169,8 +169,8 @@ class AboutDoctor extends StatelessWidget {
 }
 
 class DetailBody extends StatelessWidget {
-  const DetailBody({Key? key, required this.doctor}) : super(key: key);
-  final Map<dynamic, dynamic> doctor;
+  const DetailBody({Key? key, required this.lawyer}) : super(key: key);
+  final Map<dynamic, dynamic> lawyer;
 
   @override
   Widget build(BuildContext context) {
@@ -181,18 +181,18 @@ class DetailBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           Config.spaceSmall,
-          DoctorInfo(
-            patients: doctor['patients'],
-            exp: doctor['experience'],
+          LawyerInfo(
+            patients: lawyer['patients'],
+            exp: lawyer['experience'],
           ),
           Config.spaceMedium,
           const Text(
-            'About Doctor',
+            'About Lawyer',
             style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
           ),
           Config.spaceSmall,
           Text(
-            '${doctor['doctor_name']} is an experience ${doctor['category']} Lawyer in Jakarta, graduated since 2008, and completed his/her at Universitas Gadjah Mada.',
+            '${lawyer['lawyer_name']} is an experience ${lawyer['category']} Lawyer in Jakarta, graduated since 2008, and completed his/her at Universitas Gadjah Mada.',
             style: const TextStyle(
               fontWeight: FontWeight.w500,
               height: 1.5,
@@ -206,8 +206,8 @@ class DetailBody extends StatelessWidget {
   }
 }
 
-class DoctorInfo extends StatelessWidget {
-  const DoctorInfo({Key? key, required this.patients, required this.exp})
+class LawyerInfo extends StatelessWidget {
+  const LawyerInfo({Key? key, required this.patients, required this.exp})
       : super(key: key);
 
   final int patients;

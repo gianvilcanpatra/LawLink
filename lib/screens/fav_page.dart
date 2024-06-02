@@ -1,4 +1,4 @@
-import "package:doctor_appointment_app/components/doctor_card.dart";
+import "package:lawyer_appointment_app/components/lawyer_card.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
 
@@ -34,10 +34,10 @@ class _FavPageState extends State<FavPage> {
               child: Consumer<AuthModel>(
                 builder: (context, auth, child) {
                   return ListView.builder(
-                    itemCount: auth.getFavDoc.length,
+                    itemCount: auth.getFavLaw.length,
                     itemBuilder: (context, index) {
-                      return DoctorCard(
-                        doctor: auth.getFavDoc[index],
+                      return LawyerCard(
+                        lawyer: auth.getFavLaw[index],
                         //show fav icon
                         isFav: true,
                       );

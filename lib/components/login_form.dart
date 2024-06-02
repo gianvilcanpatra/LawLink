@@ -1,10 +1,10 @@
 import 'dart:convert';
 import 'dart:ui'; // Impor untuk mendapatkan ukuran layar
 
-import 'package:doctor_appointment_app/components/button.dart';
-import 'package:doctor_appointment_app/main.dart';
-import 'package:doctor_appointment_app/models/auth_model.dart';
-import 'package:doctor_appointment_app/providers/dio_provider.dart';
+import 'package:lawyer_appointment_app/components/button.dart';
+import 'package:lawyer_appointment_app/main.dart';
+import 'package:lawyer_appointment_app/models/auth_model.dart';
+import 'package:lawyer_appointment_app/providers/dio_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -112,11 +112,11 @@ class _LoginFormState extends State<LoginForm> {
                           final user = json.decode(response);
 
                           //check if any appointment today
-                          for (var doctorData in user['doctor']) {
+                          for (var lawyerData in user['lawyer']) {
                             //if there is appointment return for today
 
-                            if (doctorData['appointments'] != null) {
-                              appointment = doctorData;
+                            if (lawyerData['appointments'] != null) {
+                              appointment = lawyerData;
                             }
                           }
 

@@ -1,15 +1,15 @@
-import 'package:doctor_appointment_app/main.dart';
-import 'package:doctor_appointment_app/providers/dio_provider.dart';
-import 'package:doctor_appointment_app/utils/config.dart';
+import 'package:lawyer_appointment_app/main.dart';
+import 'package:lawyer_appointment_app/providers/dio_provider.dart';
+import 'package:lawyer_appointment_app/utils/config.dart';
 import 'package:flutter/material.dart';
 import 'package:rating_dialog/rating_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppointmentCard extends StatefulWidget {
-  AppointmentCard({Key? key, required this.doctor, required this.color})
+  AppointmentCard({Key? key, required this.lawyer, required this.color})
       : super(key: key);
 
-  final Map<String, dynamic> doctor;
+  final Map<String, dynamic> lawyer;
   final Color color;
 
   @override
@@ -36,7 +36,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                 children: [
                   CircleAvatar(
                     backgroundImage: NetworkImage(
-                        "http://127.0.0.1:8000${widget.doctor['doctor_profile']}"), //insert doctor profile
+                        "http://127.0.0.1:8000${widget.lawyer['lawyer_profile']}"), //insert lawyer profile
                   ),
                   const SizedBox(
                     width: 10,
@@ -46,14 +46,14 @@ class _AppointmentCardState extends State<AppointmentCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
-                        '${widget.doctor['doctor_name']}',
+                        '${widget.lawyer['lawyer_name']}',
                         style: const TextStyle(color: Colors.white),
                       ),
                       const SizedBox(
                         height: 2,
                       ),
                       Text(
-                        widget.doctor['category'],
+                        widget.lawyer['category'],
                         style: const TextStyle(color: Colors.black),
                       )
                     ],
@@ -63,7 +63,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
               Config.spaceSmall,
               //Schedule info here
               ScheduleCard(
-                appointment: widget.doctor['appointments'],
+                appointment: widget.lawyer['appointments'],
               ),
               Config.spaceSmall,
               //action button
@@ -126,10 +126,10 @@ class _AppointmentCardState extends State<AppointmentCard> {
                                         .storeReviews(
                                             response.comment,
                                             response.rating,
-                                            widget.doctor['appointments']
+                                            widget.lawyer['appointments']
                                                 ['id'], //this is appointment id
-                                            widget.doctor[
-                                                'doc_id'], //this is doctor id
+                                            widget.lawyer[
+                                                'law_id'], //this is lawyer id
                                             token);
 
                                     //if successful, then refresh

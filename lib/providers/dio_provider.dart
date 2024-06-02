@@ -53,10 +53,10 @@ class DioProvider {
 
   //store booking details
   Future<dynamic> bookAppointment(
-      String date, String day, String time, int doctor, String token) async {
+      String date, String day, String time, int lawyer, String token) async {
     try {
       var response = await Dio().post('http://127.0.0.1:8000/api/book',
-          data: {'date': date, 'day': day, 'time': time, 'doctor_id': doctor},
+          data: {'date': date, 'day': day, 'time': time, 'lawyer_id': lawyer},
           options: Options(headers: {'Authorization': 'Bearer $token'}));
 
       if (response.statusCode == 200 && response.data != '') {
@@ -87,14 +87,14 @@ class DioProvider {
 
   //store rating details
   Future<dynamic> storeReviews(
-      String reviews, double ratings, int id, int doctor, String token) async {
+      String reviews, double ratings, int id, int lawyer, String token) async {
     try {
       var response = await Dio().post('http://127.0.0.1:8000/api/reviews',
           data: {
             'ratings': ratings,
             'reviews': reviews,
             'appointment_id': id,
-            'doctor_id': doctor
+            'lawyer_id': lawyer
           },
           options: Options(headers: {'Authorization': 'Bearer $token'}));
 
@@ -108,8 +108,8 @@ class DioProvider {
     }
   }
 
-  //store fav doctor
-  Future<dynamic> storeFavDoc(String token, List<dynamic> favList) async {
+  //store fav lawyer
+  Future<dynamic> storeFavLaw(String token, List<dynamic> favList) async {
     try {
       var response = await Dio().post('http://127.0.0.1:8000/api/fav',
           data: {
