@@ -184,6 +184,7 @@ class DetailBody extends StatelessWidget {
           LawyerInfo(
             patients: lawyer['patients'],
             exp: lawyer['experience'],
+            // rating: lawyer['rating'], // Add this line
           ),
           Config.spaceMedium,
           const Text(
@@ -207,11 +208,16 @@ class DetailBody extends StatelessWidget {
 }
 
 class LawyerInfo extends StatelessWidget {
-  const LawyerInfo({Key? key, required this.patients, required this.exp})
-      : super(key: key);
+  const LawyerInfo({
+    Key? key,
+    required this.patients,
+    required this.exp,
+    // this.rating, // Add rating
+  }) : super(key: key);
 
   final int patients;
   final int exp;
+  // final double rating; // Add rating
 
   @override
   Widget build(BuildContext context) {
@@ -231,9 +237,9 @@ class LawyerInfo extends StatelessWidget {
         const SizedBox(
           width: 15,
         ),
-        const InfoCard(
+        InfoCard(
           label: 'Rating',
-          value: '4.6',
+          value: '5', // Display rating from backend
         ),
       ],
     );
