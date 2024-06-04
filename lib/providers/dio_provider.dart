@@ -142,4 +142,17 @@ class DioProvider {
       return error;
     }
   }
+
+  Future<bool> checkSlotAvailability(
+      String date, String time, int lawyerId, String token) async {
+    try {
+      var response = await Dio().post('http://127.0.0.1:8000/api/check-slot',
+          data: {'date': date, 'time': time, 'lawyer_id': lawyerId},
+          options: Options(headers: {'Authorization': 'Bearer $token'}));
+
+      return response.statusCode == 200;
+    } catch (error) {
+      return false;
+    }
+  }
 }

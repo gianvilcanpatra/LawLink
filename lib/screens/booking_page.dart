@@ -113,15 +113,36 @@ class _BookingPageState extends State<BookingPage> {
                 width: double.infinity,
                 title: 'Make Appointment',
                 onPressed: () async {
-                  //convert date/day/time into string first
                   final getDate = DateConverted.getDate(_currentDay);
                   final getDay = DateConverted.getDay(_currentDay.weekday);
                   final getTime = DateConverted.getTime(_currentIndex!);
 
+                  bool isAvailable = await DioProvider().checkSlotAvailability(
+                      getDate, getTime, lawyer['lawyer_id'], token!);
+
+                  if (!isAvailable) {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Booking Failed'),
+                          content: Text('Slot already booked!'),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text('OK'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    return;
+                  }
+
                   final booking = await DioProvider().bookAppointment(
                       getDate, getDay, getTime, lawyer['lawyer_id'], token!);
-
-                  //if booking return status code 200, then redirect to success booking page
 
                   if (booking == 200) {
                     MyApp.navigatorKey.currentState!
