@@ -79,7 +79,25 @@ class _AppointmentCardState extends State<AppointmentCard> {
                         'Cancel',
                         style: TextStyle(color: Colors.white),
                       ),
-                      onPressed: () {},
+                      onPressed: () async {
+                        final SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+                        final token = prefs.getString('token') ?? '';
+
+                        final response = await DioProvider().cancelAppointment(
+                            widget.lawyer['appointments']['id'], token);
+
+                        if (response == 200) {
+                          // Refresh atau update UI setelah sukses membatalkan
+                          MyApp.navigatorKey.currentState!.pushNamed('main');
+                        } else {
+                          // Tampilkan pesan error jika gagal
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text('Failed to cancel appointment')),
+                          );
+                        }
+                      },
                     ),
                   ),
                   const SizedBox(

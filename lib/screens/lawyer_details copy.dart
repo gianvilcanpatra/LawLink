@@ -1,16 +1,17 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:lawyer_appointment_app/components/button.dart';
 import 'package:lawyer_appointment_app/models/auth_model.dart';
 import 'package:lawyer_appointment_app/providers/dio_provider.dart';
 import 'package:lawyer_appointment_app/utils/config.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../components//custom_appbar.dart';
+import '../components/custom_appbar.dart';
 
 class LawyerDetails extends StatefulWidget {
   const LawyerDetails({Key? key, required this.lawyer, required this.isFav})
       : super(key: key);
+
   final Map<String, dynamic> lawyer;
   final bool isFav;
 
@@ -24,9 +25,23 @@ class _LawyerDetailsState extends State<LawyerDetails> {
 
   @override
   void initState() {
+    super.initState();
     lawyer = widget.lawyer;
     isFav = widget.isFav;
-    super.initState();
+    fetchLawyerDetails();
+  }
+
+  void fetchLawyerDetails() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    if (token.isNotEmpty) {
+      final response = await DioProvider().getLawyerDetails(token);
+      if (response != null) {
+        setState(() {
+          lawyer = response;
+        });
+      }
+    }
   }
 
   @override
@@ -36,34 +51,21 @@ class _LawyerDetailsState extends State<LawyerDetails> {
         appTitle: 'Lawyer Details',
         icon: const FaIcon(Icons.arrow_back_ios),
         actions: [
-          //Favarite Button
           IconButton(
-            //press this button to add/remove favorite lawyer
             onPressed: () async {
-              //get latest favorite list from auth model
               final list =
                   Provider.of<AuthModel>(context, listen: false).getFav;
-
-              //if law id is already exist, mean remove the law id
               if (list.contains(lawyer['law_id'])) {
                 list.removeWhere((id) => id == lawyer['law_id']);
               } else {
-                //else, add new lawyer to favorite list
                 list.add(lawyer['law_id']);
               }
-
-              //update the list into auth model and notify all widgets
               Provider.of<AuthModel>(context, listen: false).setFavList(list);
-
               final SharedPreferences prefs =
                   await SharedPreferences.getInstance();
               final token = prefs.getString('token') ?? '';
-
-              if (token.isNotEmpty && token != '') {
-                //update the favorite list into database
+              if (token.isNotEmpty) {
                 final response = await DioProvider().storeFavLaw(token, list);
-                //if insert successfully, then change the favorite status
-
                 if (response == 200) {
                   setState(() {
                     isFav = !isFav;
@@ -81,21 +83,12 @@ class _LawyerDetailsState extends State<LawyerDetails> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: <Widget>[
-                    AboutLawyer(
-                      lawyer: lawyer,
-                    ),
-                    DetailBody(
-                      lawyer: lawyer,
-                    ),
-                    ReviewsList(reviews: lawyer['reviews'] ?? []),
-                  ],
-                ),
-              ),
-            ),
+            AboutLawyer(lawyer: lawyer),
+            const InfoBox(),
+            DetailBody(lawyer: lawyer),
+            const Spacer(),
+            ReviewsList(reviews: lawyer['reviews'] ?? []),
+            const SizedBox(height: 20), // Added some spacing
             Padding(
               padding: const EdgeInsets.all(20),
               child: Button(
@@ -110,6 +103,98 @@ class _LawyerDetailsState extends State<LawyerDetails> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class InfoBox extends StatelessWidget {
+  const InfoBox({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Config().init(context);
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        InfoCard(
+          title: 'Clients',
+          value: '100+',
+          icon: Icons.person,
+          color: Colors.blue,
+        ),
+        InfoCard(
+          title: 'Experience',
+          value: '10 Years',
+          icon: Icons.work,
+          color: Colors.orange,
+        ),
+        InfoCard(
+          title: 'Rating',
+          value: '4.8',
+          icon: Icons.star,
+          color: Colors.purple,
+        ),
+      ],
+    );
+  }
+}
+
+class InfoCard extends StatelessWidget {
+  final String title;
+  final String value;
+  final IconData icon;
+  final Color color;
+
+  const InfoCard({
+    Key? key,
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8.0),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.1),
+            spreadRadius: 1,
+            blurRadius: 5,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: <Widget>[
+          Icon(
+            icon,
+            color: color,
+            size: 32.0,
+          ),
+          const SizedBox(height: 8.0),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 4.0),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14.0,
+              color: Colors.grey,
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -188,9 +273,8 @@ class AboutLawyer extends StatelessWidget {
   Widget build(BuildContext context) {
     Config().init(context);
     return Container(
-      width: double.infinity,
-      child: Column(
-        children: <Widget>[
+        width: double.infinity,
+        child: Column(children: <Widget>[
           CircleAvatar(
             radius: 65.0,
             backgroundImage: NetworkImage(
@@ -234,23 +318,21 @@ class AboutLawyer extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     Icon(Icons.star, color: Colors.yellow[600], size: 20),
-          //     SizedBox(width: 5),
-          //     Text(
-          //       lawyer['average_rating']?.toStringAsFixed(1) ?? 'N/A',
-          //       style: const TextStyle(
-          //         fontSize: 16.0,
-          //         fontWeight: FontWeight.bold,
-          //       ),
-          //     ),
-          //   ],
-          // ),
-        ],
-      ),
-    );
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.star, color: Colors.yellow[600], size: 20),
+              SizedBox(width: 5),
+              Text(
+                lawyer['average_rating']?.toStringAsFixed(1) ?? 'N/A',
+                style: const TextStyle(
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ]));
   }
 }
 
@@ -264,160 +346,55 @@ class DetailBody extends StatelessWidget {
     Config().init(context);
     final List availabilities = lawyer['availability'] ?? [];
 
-    return SingleChildScrollView(
-      // Tambahkan SingleChildScrollView di sini
-      child: Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.all(30),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            // const Text(
-            //   'About',
-            //   style: TextStyle(
-            //     fontSize: 18.0,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            // Config.spaceSmall,
-            // Text(
-            //   lawyer['description'] ?? 'No description available.',
-            //   style: const TextStyle(
-            //     fontSize: 14.0,
-            //     fontWeight: FontWeight.normal,
-            //   ),
-            //   textAlign: TextAlign.justify,
-            //   softWrap: true,
-            // ),
-            // Config.spaceMedium,
-            // const Text(
-            //   'Available Time',
-            //   style: TextStyle(
-            //     fontSize: 18.0,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            // Config.spaceSmall,
-            ...availabilities.map((availability) {
-              return Row(
-                children: [
-                  const Icon(
-                    Icons.calendar_today,
-                    color: Colors.blue,
-                    size: 20,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    availability['date'] ?? 'N/A',
-                    style: const TextStyle(fontSize: 14.0),
-                  ),
-                ],
-              );
-            }).toList(),
-            // Config.spaceMedium,
-            // const Text(
-            //   'Rating & Reviews',
-            //   style: TextStyle(
-            //     fontSize: 18.0,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            // Config.spaceSmall,
-            LawyerInfo(
-              patients: lawyer['patients'],
-              exp: lawyer['experience'],
-              rating: lawyer['average_rating'], // Add rating
+    return Container(
+      alignment: Alignment.center,
+      padding: const EdgeInsets.all(30),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            'About',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
             ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class LawyerInfo extends StatelessWidget {
-  const LawyerInfo({
-    Key? key,
-    required this.patients,
-    required this.exp,
-    required this.rating, // Add rating
-  }) : super(key: key);
-
-  final int patients;
-  final int exp;
-  final double? rating; // Add nullable rating
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: <Widget>[
-        InfoCard(
-          label: 'Client',
-          value: patients.toString(),
-        ),
-        const SizedBox(
-          width: 15,
-        ),
-        InfoCard(
-          label: 'Experiences',
-          value: '$exp years',
-        ),
-        const SizedBox(
-          width: 15,
-        ),
-        InfoCard(
-          label: 'Rating',
-          value: rating != null
-              ? rating.toString()
-              : 'N/A', // Check for null value
-        ),
-      ],
-    );
-  }
-}
-
-class InfoCard extends StatelessWidget {
-  const InfoCard({Key? key, required this.label, required this.value})
-      : super(key: key);
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
-          color: Color.fromARGB(255, 255, 65, 65),
-        ),
-        padding: const EdgeInsets.symmetric(
-          vertical: 15,
-          horizontal: 15,
-        ),
-        child: Column(
-          children: <Widget>[
-            Text(
-              label,
-              style: const TextStyle(
-                color: Colors.black,
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
+          ),
+          Config.spaceSmall,
+          Text(
+            lawyer['description'] ?? 'No description available.',
+            style: const TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.normal,
             ),
-            const SizedBox(
-              height: 10,
+            textAlign: TextAlign.justify,
+            softWrap: true,
+          ),
+          Config.spaceMedium,
+          const Text(
+            'Available Time',
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
             ),
-            Text(
-              value,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
-          ],
-        ),
+          ),
+          Config.spaceSmall,
+          ...availabilities.map((availability) {
+            return Row(
+              children: [
+                const Icon(
+                  Icons.calendar_today,
+                  color: Colors.blue,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
+                Text(
+                  availability['date'] ?? 'N/A',
+                  style: const TextStyle(fontSize: 14.0),
+                ),
+              ],
+            );
+          }).toList(),
+        ],
       ),
     );
   }

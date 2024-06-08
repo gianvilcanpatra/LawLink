@@ -2,9 +2,30 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:lawyer_appointment_app/models/review.dart';
 
 class DioProvider {
+  Future<dynamic> getLawyerDetails(String token) async {
+    try {
+      var response = await Dio().get(
+        'http://127.0.0.1:8000/api/lawyers',
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        return response.data;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      return null;
+    }
+  }
+
   //get token
+
   Future<dynamic> getToken(String email, String password) async {
     try {
       var response = await Dio().post('http://127.0.0.1:8000/api/login',
@@ -153,6 +174,40 @@ class DioProvider {
       return response.statusCode == 200;
     } catch (error) {
       return false;
+    }
+  }
+
+  Future<int> cancelAppointment(int appointmentId, String token) async {
+    try {
+      var response = await Dio().post(
+        'http://127.0.0.1:8000/api/appointments/cancel/$appointmentId',
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+
+      return response.statusCode ?? 500;
+    } catch (error) {
+      return 500;
+    }
+  }
+
+  Future<int> rescheduleAppointment(
+      int appointmentId, String date, String time, String token) async {
+    try {
+      final response = await Dio().post(
+        'http://127.0.0.1:8000/api/reschedule',
+        data: {
+          'appointment_id': appointmentId,
+          'date': date,
+          'time': time,
+        },
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      return response.statusCode!;
+    } catch (e) {
+      print(e);
+      return 400; // Return an error code if request fails
     }
   }
 }

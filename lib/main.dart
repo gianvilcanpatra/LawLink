@@ -53,6 +53,7 @@ class MyApp extends StatelessWidget {
           '/': (context) => const AuthPage(),
           'main': (context) => const MainLayout(),
           'booking_page': (context) => BookingPage(),
+          'booking': (context) => BookingPage(),
           'success_booking': (context) => const AppointmentBooked(),
         },
       ),

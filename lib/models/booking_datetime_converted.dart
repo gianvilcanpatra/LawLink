@@ -20,7 +20,7 @@ class DateConverted {
         return 'Friday';
       case 6:
         return 'Saturday';
-      case 7:
+      case 1:
         return 'Sunday';
       default:
         return 'Sunday';

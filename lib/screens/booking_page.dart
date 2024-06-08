@@ -17,14 +17,15 @@ class BookingPage extends StatefulWidget {
 }
 
 class _BookingPageState extends State<BookingPage> {
-  //declaration
   CalendarFormat _format = CalendarFormat.month;
   DateTime _focusDay = DateTime.now();
   DateTime _currentDay = DateTime.now();
   int? _currentIndex;
   bool _dateSelected = false;
   bool _timeSelected = false;
-  String? token; //get token for insert booking date and time into database
+  String? token;
+  bool isReschedule = false;
+  int? appointmentId;
 
   Future<void> getToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -41,6 +42,10 @@ class _BookingPageState extends State<BookingPage> {
   Widget build(BuildContext context) {
     Config().init(context);
     final lawyer = ModalRoute.of(context)!.settings.arguments as Map;
+    isReschedule = lawyer.containsKey('appointmentId');
+    if (isReschedule) {
+      appointmentId = lawyer['appointmentId'];
+    }
     return Scaffold(
       appBar: CustomAppBar(
         appTitle: 'Appointment',
@@ -111,7 +116,9 @@ class _BookingPageState extends State<BookingPage> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 80),
               child: Button(
                 width: double.infinity,
-                title: 'Make Appointment',
+                title: isReschedule
+                    ? 'Reschedule Appointment'
+                    : 'Make Appointment',
                 onPressed: () async {
                   final getDate = DateConverted.getDate(_currentDay);
                   final getDay = DateConverted.getDay(_currentDay.weekday);
@@ -141,12 +148,20 @@ class _BookingPageState extends State<BookingPage> {
                     return;
                   }
 
-                  final booking = await DioProvider().bookAppointment(
-                      getDate, getDay, getTime, lawyer['lawyer_id'], token!);
-
-                  if (booking == 200) {
-                    MyApp.navigatorKey.currentState!
-                        .pushNamed('success_booking');
+                  if (isReschedule) {
+                    final response = await DioProvider().rescheduleAppointment(
+                        appointmentId!, getDate, getTime, token!);
+                    if (response == 200) {
+                      MyApp.navigatorKey.currentState!
+                          .pushNamed('success_booking');
+                    }
+                  } else {
+                    final booking = await DioProvider().bookAppointment(
+                        getDate, getDay, getTime, lawyer['lawyer_id'], token!);
+                    if (booking == 200) {
+                      MyApp.navigatorKey.currentState!
+                          .pushNamed('success_booking');
+                    }
                   }
                 },
                 disable: _timeSelected && _dateSelected ? false : true,
@@ -158,13 +173,11 @@ class _BookingPageState extends State<BookingPage> {
     );
   }
 
-  //table calendar
   Widget _tableCalendar() {
     return TableCalendar(
       focusedDay: _focusDay,
       firstDay: DateTime.now(),
-      lastDay: DateTime.now()
-          .add(Duration(days: 365)), // Ensure lastDay is in the future
+      lastDay: DateTime.now().add(Duration(days: 366)),
       calendarFormat: _format,
       currentDay: _currentDay,
       rowHeight: 48,
@@ -180,13 +193,13 @@ class _BookingPageState extends State<BookingPage> {
           _format = format;
         });
       },
-      onDaySelected: ((selectedDay, focusedDay) {
+      onDaySelected: (selectedDay, focusedDay) {
         setState(() {
           _currentDay = selectedDay;
           _focusDay = focusedDay;
           _dateSelected = true;
         });
-      }),
+      },
     );
   }
 }

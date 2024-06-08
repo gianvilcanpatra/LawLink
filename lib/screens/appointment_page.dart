@@ -31,6 +31,23 @@ class _AppointmentPageState extends State<AppointmentPage> {
     }
   }
 
+  // Cancel appointment method
+  Future<void> cancelAppointment(int appointmentId) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token') ?? '';
+    final response =
+        await DioProvider().cancelAppointment(appointmentId, token);
+
+    if (response == 200) {
+      // Refresh appointment list after cancellation
+      getAppointments();
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to cancel appointment')),
+      );
+    }
+  }
+
   @override
   void initState() {
     getAppointments();
@@ -116,7 +133,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                     width: 100,
                     height: 40,
                     decoration: BoxDecoration(
-                      color: Color.fromARGB(255, 255, 0, 0),
+                      color: Config.primaryColor,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Center(
@@ -124,6 +141,7 @@ class _AppointmentPageState extends State<AppointmentPage> {
                         status.name,
                         style: const TextStyle(
                           color: Colors.white,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -146,86 +164,149 @@ class _AppointmentPageState extends State<AppointmentPage> {
                       ),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    margin: !isLastElement
+                    margin: isLastElement
                         ? const EdgeInsets.only(bottom: 20)
-                        : EdgeInsets.zero,
+                        : const EdgeInsets.only(bottom: 10),
                     child: Padding(
                       padding: const EdgeInsets.all(15),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           Row(
-                            children: [
+                            children: <Widget>[
                               CircleAvatar(
                                 backgroundImage: NetworkImage(
-                                    "http://127.0.0.1:8000${schedule['lawyer_profile']}"),
+                                    'http://127.0.0.1:8000${schedule['lawyer_profile']}'),
                               ),
-                              const SizedBox(
-                                width: 10,
-                              ),
+                              Config.spaceSmall,
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                                children: <Widget>[
                                   Text(
                                     schedule['lawyer_name'],
                                     style: const TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w700,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 5,
-                                  ),
+                                  const SizedBox(height: 5),
                                   Text(
                                     schedule['category'],
                                     style: const TextStyle(
-                                      color: Color.fromARGB(255, 0, 0, 0),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      color: Colors.grey,
                                     ),
                                   ),
                                 ],
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 15,
-                          ),
-                          ScheduleCard(
-                            date: schedule['date'],
-                            day: schedule['day'],
-                            time: schedule['time'],
-                          ),
-                          const SizedBox(
-                            height: 15,
+                          const SizedBox(height: 15),
+                          const Divider(
+                            color: Colors.grey,
+                            thickness: 1,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
+                            children: <Widget>[
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  const Text(
+                                    'Date',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    schedule['date'],
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  const Text(
+                                    'Time',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    schedule['time'],
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  const Text(
+                                    'Status',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 5),
+                                  Text(
+                                    schedule['status']
+                                        .toString()
+                                        .split('.')
+                                        .last,
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
                               Expanded(
                                 child: OutlinedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    cancelAppointment(schedule['id']);
+                                  },
                                   child: const Text(
                                     'Cancel',
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 0, 0, 0)),
+                                    style: TextStyle(color: Colors.black),
                                   ),
                                 ),
                               ),
-                              const SizedBox(
-                                width: 20,
-                              ),
+                              const SizedBox(width: 20),
                               Expanded(
                                 child: OutlinedButton(
                                   style: OutlinedButton.styleFrom(
-                                    backgroundColor:
-                                        Color.fromARGB(255, 255, 0, 0),
+                                    backgroundColor: Colors.red,
                                   ),
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Navigator.of(context).pushNamed(
+                                      'booking',
+                                      arguments: {
+                                        'appointmentId': schedule['id'],
+                                        'lawyer_id': schedule['law_id'],
+                                        'lawyer_name': schedule['lawyer_name'],
+                                        'lawyer_profile':
+                                            schedule['lawyer_profile'],
+                                        'category': schedule['category'],
+                                      },
+                                    );
+                                  },
                                   child: const Text(
                                     'Reschedule',
-                                    style: TextStyle(
-                                        color: Color.fromARGB(255, 0, 0, 0)),
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                 ),
                               ),
@@ -240,65 +321,6 @@ class _AppointmentPageState extends State<AppointmentPage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class ScheduleCard extends StatelessWidget {
-  const ScheduleCard(
-      {Key? key, required this.date, required this.day, required this.time})
-      : super(key: key);
-  final String date;
-  final String day;
-  final String time;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade200,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          const Icon(
-            Icons.calendar_today,
-            color: Color.fromARGB(255, 0, 0, 0),
-            size: 15,
-          ),
-          const SizedBox(
-            width: 5,
-          ),
-          Text(
-            '$day, $date',
-            style: const TextStyle(
-              color: Color.fromARGB(255, 0, 0, 0),
-            ),
-          ),
-          const SizedBox(
-            width: 20,
-          ),
-          const Icon(
-            Icons.access_alarm,
-            color: Color.fromARGB(255, 0, 0, 0),
-            size: 17,
-          ),
-          const SizedBox(
-            width: 5,
-          ),
-          Flexible(
-              child: Text(
-            time,
-            style: const TextStyle(
-              color: Color.fromARGB(255, 0, 0, 0),
-            ),
-          ))
-        ],
       ),
     );
   }
