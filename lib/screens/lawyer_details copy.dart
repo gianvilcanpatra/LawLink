@@ -86,9 +86,8 @@ class _LawyerDetailsState extends State<LawyerDetails> {
             AboutLawyer(lawyer: lawyer),
             const InfoBox(),
             DetailBody(lawyer: lawyer),
-            const Spacer(),
             ReviewsList(reviews: lawyer['reviews'] ?? []),
-            const SizedBox(height: 20), // Added some spacing
+            const Spacer(),
             Padding(
               padding: const EdgeInsets.all(20),
               child: Button(

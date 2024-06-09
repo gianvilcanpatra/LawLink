@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:ui'; // Impor untuk mendapatkan ukuran layar
-
 import 'package:lawyer_appointment_app/components/button.dart';
 import 'package:lawyer_appointment_app/main.dart';
 import 'package:lawyer_appointment_app/models/auth_model.dart';
@@ -23,6 +22,24 @@ class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passController = TextEditingController();
   bool obsecurePass = true;
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Login Failed'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,26 +78,28 @@ class _LoginFormState extends State<LoginForm> {
             cursorColor: Config.primaryColor,
             obscureText: obsecurePass,
             decoration: InputDecoration(
-                hintText: 'Password',
-                labelText: 'Password',
-                alignLabelWithHint: true,
-                prefixIcon: const Icon(Icons.lock_outline),
-                prefixIconColor: Color.fromARGB(255, 255, 0, 0),
-                suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        obsecurePass = !obsecurePass;
-                      });
-                    },
-                    icon: obsecurePass
-                        ? const Icon(
-                            Icons.visibility_off_outlined,
-                            color: Colors.black38,
-                          )
-                        : const Icon(
-                            Icons.visibility_outlined,
-                            color: Color.fromARGB(255, 165, 0, 0),
-                          ))),
+              hintText: 'Password',
+              labelText: 'Password',
+              alignLabelWithHint: true,
+              prefixIcon: const Icon(Icons.lock_outline),
+              prefixIconColor: Color.fromARGB(255, 255, 0, 0),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() {
+                    obsecurePass = !obsecurePass;
+                  });
+                },
+                icon: obsecurePass
+                    ? const Icon(
+                        Icons.visibility_off_outlined,
+                        color: Colors.black38,
+                      )
+                    : const Icon(
+                        Icons.visibility_outlined,
+                        color: Color.fromARGB(255, 165, 0, 0),
+                      ),
+              ),
+            ),
           ),
           Config.spaceSmall,
           Consumer<AuthModel>(
@@ -93,7 +112,7 @@ class _LoginFormState extends State<LoginForm> {
                   final token = await DioProvider()
                       .getToken(_emailController.text, _passController.text);
 
-                  if (token) {
+                  if (token == true) {
                     //auth.loginSuccess(); //update login status
                     //rediret to main page
 
@@ -125,6 +144,9 @@ class _LoginFormState extends State<LoginForm> {
                         });
                       }
                     }
+                  } else {
+                    //login gagal, tampilkan dialog kesalahan
+                    _showErrorDialog('Incorrect email or password');
                   }
                 },
                 disable: false,

@@ -191,14 +191,21 @@ class AboutLawyer extends StatelessWidget {
       width: double.infinity,
       child: Column(
         children: <Widget>[
-          CircleAvatar(
-            radius: 65.0,
-            backgroundImage: NetworkImage(
-              "http://127.0.0.1:8000${lawyer['lawyer_profile']}",
-            ),
-            backgroundColor: Colors.white,
+          // CircleAvatar(
+          //   radius: 65.0,
+          //   backgroundImage: NetworkImage(
+          //     "http://127.0.0.1:8000${lawyer['lawyer_profile']}",
+          //   ),
+          //   backgroundColor: Colors.white,
+          // ),
+          // Config.spaceMedium,
+          // New section to add the image from assets
+          Image.asset(
+            'assets/lawyer_1.jpg',
+            width: 250.0,
+            height: 250.0,
           ),
-          Config.spaceMedium,
+          Config.spaceSmall,
           Text(
             "Mr ${lawyer['lawyer_name']}",
             style: const TextStyle(

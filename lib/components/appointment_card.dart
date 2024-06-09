@@ -73,7 +73,7 @@ class _AppointmentCardState extends State<AppointmentCard> {
                   Expanded(
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red,
+                        backgroundColor: Color.fromARGB(255, 255, 217, 0),
                       ),
                       child: const Text(
                         'Cancel',

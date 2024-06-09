@@ -20,7 +20,12 @@ class _HomePageState extends State<HomePage> {
   Map<String, dynamic> user = {};
   Map<String, dynamic> lawyer = {};
   List<dynamic> favList = [];
+  String selectedCategory = 'All';
   List<Map<String, dynamic>> medCat = [
+    {
+      "icon": FontAwesomeIcons.list,
+      "category": "All",
+    },
     {
       "icon": FontAwesomeIcons.userGraduate,
       "category": "General",
@@ -31,11 +36,11 @@ class _HomePageState extends State<HomePage> {
     },
     {
       "icon": FontAwesomeIcons.lungs,
-      "category": "Imigration",
+      "category": "Immigration",
     },
     {
       "icon": FontAwesomeIcons.hand,
-      "category": "tax",
+      "category": "Tax",
     },
   ];
 
@@ -59,6 +64,12 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void selectCategory(String category) {
+    setState(() {
+      selectedCategory = category;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Config().init(context);
@@ -67,7 +78,7 @@ class _HomePageState extends State<HomePage> {
     favList = Provider.of<AuthModel>(context, listen: false).getFav;
 
     return Scaffold(
-      //if user is empty, then return progress indicator
+      // if user is empty, then return progress indicator
       body: user.isEmpty
           ? const Center(
               child: CircularProgressIndicator(),
@@ -117,31 +128,39 @@ class _HomePageState extends State<HomePage> {
                           scrollDirection: Axis.horizontal,
                           children:
                               List<Widget>.generate(medCat.length, (index) {
-                            return Card(
-                              margin: const EdgeInsets.only(right: 20),
-                              color: Color.fromARGB(255, 255, 0, 0),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 15, vertical: 10),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: <Widget>[
-                                    FaIcon(
-                                      medCat[index]['icon'],
-                                      color: Colors.white,
-                                    ),
-                                    const SizedBox(
-                                      width: 20,
-                                    ),
-                                    Text(
-                                      medCat[index]['category'],
-                                      style: const TextStyle(
-                                        fontSize: 16,
+                            return GestureDetector(
+                              onTap: () {
+                                selectCategory(medCat[index]['category']);
+                              },
+                              child: Card(
+                                margin: const EdgeInsets.only(right: 20),
+                                color: selectedCategory ==
+                                        medCat[index]['category']
+                                    ? Colors.red
+                                    : Colors.grey,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15, vertical: 10),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      FaIcon(
+                                        medCat[index]['icon'],
                                         color: Colors.white,
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(
+                                        width: 20,
+                                      ),
+                                      Text(
+                                        medCat[index]['category'],
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );
@@ -160,12 +179,12 @@ class _HomePageState extends State<HomePage> {
                       lawyer.isNotEmpty
                           ? AppointmentCard(
                               lawyer: lawyer,
-                              color: Color.fromARGB(255, 255, 0, 0),
+                              color: Color.fromARGB(255, 255, 47, 0),
                             )
                           : Container(
                               width: double.infinity,
                               decoration: BoxDecoration(
-                                color: Colors.grey.shade300,
+                                color: const Color.fromARGB(255, 188, 0, 0),
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: const Center(
@@ -192,14 +211,20 @@ class _HomePageState extends State<HomePage> {
                       Config.spaceSmall,
                       Column(
                         children: List.generate(user['lawyer'].length, (index) {
-                          return LawyerCard(
-                            lawyer: user['lawyer'][index],
-                            //if lates fav list contains particular lawyer id, then show fav icon
-                            isFav: favList
-                                    .contains(user['lawyer'][index]['law_id'])
-                                ? true
-                                : false,
-                          );
+                          if (selectedCategory == 'All' ||
+                              user['lawyer'][index]['category'] ==
+                                  selectedCategory) {
+                            return LawyerCard(
+                              lawyer: user['lawyer'][index],
+                              // if latest fav list contains particular lawyer id, then show fav icon
+                              isFav: favList
+                                      .contains(user['lawyer'][index]['law_id'])
+                                  ? true
+                                  : false,
+                            );
+                          } else {
+                            return Container();
+                          }
                         }),
                       ),
                     ],

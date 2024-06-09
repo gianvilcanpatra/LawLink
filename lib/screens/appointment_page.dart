@@ -271,47 +271,50 @@ class _AppointmentPageState extends State<AppointmentPage> {
                             ],
                           ),
                           const SizedBox(height: 15),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Expanded(
-                                child: OutlinedButton(
-                                  onPressed: () {
-                                    cancelAppointment(schedule['id']);
-                                  },
-                                  child: const Text(
-                                    'Cancel',
-                                    style: TextStyle(color: Colors.black),
+                          if (schedule['status'] == FilterStatus.upcoming) ...[
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      cancelAppointment(schedule['id']);
+                                    },
+                                    child: const Text(
+                                      'Cancel',
+                                      style: TextStyle(color: Colors.black),
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 20),
-                              Expanded(
-                                child: OutlinedButton(
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                  ),
-                                  onPressed: () {
-                                    Navigator.of(context).pushNamed(
-                                      'booking',
-                                      arguments: {
-                                        'appointmentId': schedule['id'],
-                                        'lawyer_id': schedule['law_id'],
-                                        'lawyer_name': schedule['lawyer_name'],
-                                        'lawyer_profile':
-                                            schedule['lawyer_profile'],
-                                        'category': schedule['category'],
-                                      },
-                                    );
-                                  },
-                                  child: const Text(
-                                    'Reschedule',
-                                    style: TextStyle(color: Colors.white),
+                                const SizedBox(width: 20),
+                                Expanded(
+                                  child: OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context).pushNamed(
+                                        'booking',
+                                        arguments: {
+                                          'appointmentId': schedule['id'],
+                                          'lawyer_id': schedule['law_id'],
+                                          'lawyer_name':
+                                              schedule['lawyer_name'],
+                                          'lawyer_profile':
+                                              schedule['lawyer_profile'],
+                                          'category': schedule['category'],
+                                        },
+                                      );
+                                    },
+                                    child: const Text(
+                                      'Reschedule',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                          ],
                         ],
                       ),
                     ),

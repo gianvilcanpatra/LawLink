@@ -39,7 +39,7 @@ class DioProvider {
         return false;
       }
     } catch (error) {
-      return error;
+      return false; // Kembali nilai false jika terjadi kesalahan
     }
   }
 
