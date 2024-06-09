@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -208,6 +209,37 @@ class DioProvider {
     } catch (e) {
       print(e);
       return 400; // Return an error code if request fails
+    }
+  }
+
+  //update user
+  Future<bool> updateUser(String token, String? name, String? email) async {
+    try {
+      var response = await Dio().put(
+        'http://127.0.0.1:8000/api/update',
+        data: {'name': name, 'email': email},
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      return response.statusCode == 200;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  Future<bool> uploadPhoto(String token, File image) async {
+    try {
+      FormData formData = FormData.fromMap({
+        'profile_photo': await MultipartFile.fromFile(image.path),
+      });
+
+      var response = await Dio().post(
+        'http://127.0.0.1:8000/api/update/photo',
+        data: formData,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
+      return response.statusCode == 200;
+    } catch (error) {
+      return false;
     }
   }
 }

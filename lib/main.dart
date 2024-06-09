@@ -4,12 +4,22 @@ import 'package:lawyer_appointment_app/screens/auth_page.dart';
 import 'package:lawyer_appointment_app/screens/booking_page.dart';
 import 'package:lawyer_appointment_app/screens/home_page.dart';
 import 'package:lawyer_appointment_app/screens/success_booked.dart';
+import 'package:lawyer_appointment_app/screens/update_profile.dart';
+import 'package:lawyer_appointment_app/screens/detail_profile.dart';
 import 'package:lawyer_appointment_app/utils/config.dart';
+import 'package:lawyer_appointment_app/providers/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+      ],
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -57,6 +67,8 @@ class MyApp extends StatelessWidget {
           'booking_page': (context) => BookingPage(),
           'booking': (context) => BookingPage(),
           'success_booking': (context) => const AppointmentBooked(),
+          'update-profile': (context) => UpdateProfilePage(),
+          'detail-profile': (context) => DetailProfile(),
         },
       ),
     );
