@@ -6,6 +6,7 @@ import 'package:lawyer_appointment_app/providers/dio_provider.dart'; // Import t
 import 'package:lawyer_appointment_app/utils/config.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart'; // Import for date formatting
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,14 +36,20 @@ class _HomePageState extends State<HomePage> {
       "category": "Divorce",
     },
     {
-      "icon": FontAwesomeIcons.lungs,
+      "icon": FontAwesomeIcons.flag,
       "category": "Immigration",
     },
     {
-      "icon": FontAwesomeIcons.hand,
+      "icon": FontAwesomeIcons.moneyBill,
       "category": "Tax",
     },
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
 
   Future<void> getData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -56,7 +63,14 @@ class _HomePageState extends State<HomePage> {
 
           for (var lawyerData in user['lawyer']) {
             if (lawyerData['appointments'] != null) {
-              lawyer = lawyerData;
+              DateTime appointmentDate =
+                  DateFormat('yMd').parse(lawyerData['appointments']['date']);
+              DateTime today = DateTime.now();
+              DateTime tomorrow = today.add(Duration(days: 1));
+              if (appointmentDate.day == today.day ||
+                  appointmentDate.day == tomorrow.day) {
+                lawyer = lawyerData;
+              }
             }
           }
         });
@@ -179,7 +193,7 @@ class _HomePageState extends State<HomePage> {
                       lawyer.isNotEmpty
                           ? AppointmentCard(
                               lawyer: lawyer,
-                              color: Color.fromARGB(255, 255, 47, 0),
+                              color: const Color.fromARGB(255, 255, 47, 0),
                             )
                           : Container(
                               width: double.infinity,

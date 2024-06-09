@@ -36,23 +36,23 @@ class _LawyerDetailsState extends State<LawyerDetails> {
         appTitle: 'Lawyer Details',
         icon: const FaIcon(Icons.arrow_back_ios),
         actions: [
-          //Favarite Button
+          // Favorite Button
           IconButton(
-            //press this button to add/remove favorite lawyer
+            // Press this button to add/remove favorite lawyer
             onPressed: () async {
-              //get latest favorite list from auth model
+              // Get latest favorite list from auth model
               final list =
                   Provider.of<AuthModel>(context, listen: false).getFav;
 
-              //if law id is already exist, mean remove the law id
+              // If law id is already exist, mean remove the law id
               if (list.contains(lawyer['law_id'])) {
                 list.removeWhere((id) => id == lawyer['law_id']);
               } else {
-                //else, add new lawyer to favorite list
+                // Else, add new lawyer to favorite list
                 list.add(lawyer['law_id']);
               }
 
-              //update the list into auth model and notify all widgets
+              // Update the list into auth model and notify all widgets
               Provider.of<AuthModel>(context, listen: false).setFavList(list);
 
               final SharedPreferences prefs =
@@ -60,10 +60,9 @@ class _LawyerDetailsState extends State<LawyerDetails> {
               final token = prefs.getString('token') ?? '';
 
               if (token.isNotEmpty && token != '') {
-                //update the favorite list into database
+                // Update the favorite list into database
                 final response = await DioProvider().storeFavLaw(token, list);
-                //if insert successfully, then change the favorite status
-
+                // If insert successfully, then change the favorite status
                 if (response == 200) {
                   setState(() {
                     isFav = !isFav;
@@ -191,15 +190,6 @@ class AboutLawyer extends StatelessWidget {
       width: double.infinity,
       child: Column(
         children: <Widget>[
-          // CircleAvatar(
-          //   radius: 65.0,
-          //   backgroundImage: NetworkImage(
-          //     "http://127.0.0.1:8000${lawyer['lawyer_profile']}",
-          //   ),
-          //   backgroundColor: Colors.white,
-          // ),
-          // Config.spaceMedium,
-          // New section to add the image from assets
           Image.asset(
             'assets/lawyer_1.jpg',
             width: 250.0,
@@ -214,12 +204,38 @@ class AboutLawyer extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Config.spaceSmall,
+          Config.spaceMedium, // Added space between bio and education
+
+          // Bio data
           SizedBox(
             width: Config.widthSize * 0.75,
-            child: const Text(
-              'S1 Ilmu Hukum Universitar Gadjah Mada ( Yogyakarta )',
-              style: TextStyle(
+            child: Text(
+              lawyer['bio_data'] ?? 'No bio data available.',
+              style: const TextStyle(
+                color: Colors.grey,
+                fontSize: 15,
+              ),
+              softWrap: true,
+              textAlign: TextAlign.left,
+            ),
+          ),
+
+          Config.spaceSmall, // Added space after bio
+
+          // Education
+          Text(
+            "Pendidikan terakhir:", // Added label for education
+            style: const TextStyle(
+              color: Colors.grey,
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(
+            width: Config.widthSize * 0.75,
+            child: Text(
+              lawyer['pendidikan'] ?? 'No pendidikan available.',
+              style: const TextStyle(
                 color: Colors.grey,
                 fontSize: 15,
               ),
@@ -227,34 +243,6 @@ class AboutLawyer extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
           ),
-          Config.spaceSmall,
-          SizedBox(
-            width: Config.widthSize * 0.75,
-            child: const Text(
-              'Kantor Pengadilan Jakarta',
-              style: TextStyle(
-                color: Colors.grey,
-                fontSize: 15,
-              ),
-              softWrap: true,
-              textAlign: TextAlign.center,
-            ),
-          ),
-          const SizedBox(height: 10),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.center,
-          //   children: [
-          //     Icon(Icons.star, color: Colors.yellow[600], size: 20),
-          //     SizedBox(width: 5),
-          //     Text(
-          //       lawyer['average_rating']?.toStringAsFixed(1) ?? 'N/A',
-          //       style: const TextStyle(
-          //         fontSize: 16.0,
-          //         fontWeight: FontWeight.bold,
-          //       ),
-          //     ),
-          //   ],
-          // ),
         ],
       ),
     );
@@ -272,39 +260,12 @@ class DetailBody extends StatelessWidget {
     final List availabilities = lawyer['availability'] ?? [];
 
     return SingleChildScrollView(
-      // Tambahkan SingleChildScrollView di sini
       child: Container(
         alignment: Alignment.center,
         padding: const EdgeInsets.all(30),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            // const Text(
-            //   'About',
-            //   style: TextStyle(
-            //     fontSize: 18.0,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            // Config.spaceSmall,
-            // Text(
-            //   lawyer['description'] ?? 'No description available.',
-            //   style: const TextStyle(
-            //     fontSize: 14.0,
-            //     fontWeight: FontWeight.normal,
-            //   ),
-            //   textAlign: TextAlign.justify,
-            //   softWrap: true,
-            // ),
-            // Config.spaceMedium,
-            // const Text(
-            //   'Available Time',
-            //   style: TextStyle(
-            //     fontSize: 18.0,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            // Config.spaceSmall,
             ...availabilities.map((availability) {
               return Row(
                 children: [
@@ -321,19 +282,10 @@ class DetailBody extends StatelessWidget {
                 ],
               );
             }).toList(),
-            // Config.spaceMedium,
-            // const Text(
-            //   'Rating & Reviews',
-            //   style: TextStyle(
-            //     fontSize: 18.0,
-            //     fontWeight: FontWeight.bold,
-            //   ),
-            // ),
-            // Config.spaceSmall,
             LawyerInfo(
-              patients: lawyer['patients'],
+              totalReviews: lawyer['total_reviews'],
               exp: lawyer['experience'],
-              rating: lawyer['average_rating'], // Add rating
+              rating: lawyer['average_rating'],
             ),
           ],
         ),
@@ -345,22 +297,22 @@ class DetailBody extends StatelessWidget {
 class LawyerInfo extends StatelessWidget {
   const LawyerInfo({
     Key? key,
-    required this.patients,
+    required this.totalReviews,
     required this.exp,
-    required this.rating, // Add rating
+    required this.rating,
   }) : super(key: key);
 
-  final int patients;
+  final int totalReviews;
   final int exp;
-  final double? rating; // Add nullable rating
+  final double? rating;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: <Widget>[
         InfoCard(
-          label: 'Client',
-          value: patients.toString(),
+          label: 'Total Reviews',
+          value: totalReviews.toString(),
         ),
         const SizedBox(
           width: 15,
@@ -374,9 +326,7 @@ class LawyerInfo extends StatelessWidget {
         ),
         InfoCard(
           label: 'Rating',
-          value: rating != null
-              ? rating.toString()
-              : 'N/A', // Check for null value
+          value: rating != null ? rating.toString() : 'N/A',
         ),
       ],
     );

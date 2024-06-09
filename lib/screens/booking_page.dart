@@ -38,6 +38,18 @@ class _BookingPageState extends State<BookingPage> {
     super.initState();
   }
 
+  bool isTimeSlotDisabled(int index) {
+    final now = DateTime.now();
+    if (_currentDay.year == now.year &&
+        _currentDay.month == now.month &&
+        _currentDay.day == now.day) {
+      // Check if the current slot time has passed
+      final slotTime = DateTime(now.year, now.month, now.day, index + 9);
+      return slotTime.isBefore(now);
+    }
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     Config().init(context);
@@ -75,14 +87,17 @@ class _BookingPageState extends State<BookingPage> {
           SliverGrid(
             delegate: SliverChildBuilderDelegate(
               (context, index) {
+                final isDisabled = isTimeSlotDisabled(index);
                 return InkWell(
                   splashColor: Colors.transparent,
-                  onTap: () {
-                    setState(() {
-                      _currentIndex = index;
-                      _timeSelected = true;
-                    });
-                  },
+                  onTap: isDisabled
+                      ? null
+                      : () {
+                          setState(() {
+                            _currentIndex = index;
+                            _timeSelected = true;
+                          });
+                        },
                   child: Container(
                     margin: const EdgeInsets.all(5),
                     decoration: BoxDecoration(
@@ -92,15 +107,22 @@ class _BookingPageState extends State<BookingPage> {
                             : Colors.black,
                       ),
                       borderRadius: BorderRadius.circular(15),
-                      color:
-                          _currentIndex == index ? Config.primaryColor : null,
+                      color: isDisabled
+                          ? Colors.grey
+                          : _currentIndex == index
+                              ? Config.primaryColor
+                              : null,
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      '${index + 9}:00 ${index + 9 > 11 ? "PM" : "AM"}',
+                      '${index + 9}:00 ${index + 9 >= 12 ? "PM" : "AM"}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        color: _currentIndex == index ? Colors.white : null,
+                        color: isDisabled
+                            ? Colors.white
+                            : _currentIndex == index
+                                ? Colors.white
+                                : null,
                       ),
                     ),
                   ),
@@ -198,6 +220,8 @@ class _BookingPageState extends State<BookingPage> {
           _currentDay = selectedDay;
           _focusDay = focusedDay;
           _dateSelected = true;
+          _currentIndex = null; // Reset selected time slot when date changes
+          _timeSelected = false; // Reset time selected flag
         });
       },
     );

@@ -2,6 +2,7 @@ import 'package:lawyer_appointment_app/main_layout.dart';
 import 'package:lawyer_appointment_app/models/auth_model.dart';
 import 'package:lawyer_appointment_app/screens/auth_page.dart';
 import 'package:lawyer_appointment_app/screens/booking_page.dart';
+import 'package:lawyer_appointment_app/screens/home_page.dart';
 import 'package:lawyer_appointment_app/screens/success_booked.dart';
 import 'package:lawyer_appointment_app/utils/config.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         routes: {
           '/': (context) => const AuthPage(),
           'main': (context) => const MainLayout(),
+          'home_page': (context) => const HomePage(),
           'booking_page': (context) => BookingPage(),
           'booking': (context) => BookingPage(),
           'success_booking': (context) => const AppointmentBooked(),
