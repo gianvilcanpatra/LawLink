@@ -1,5 +1,4 @@
 import 'package:lawyer_appointment_app/components/button.dart';
-import 'package:lawyer_appointment_app/main.dart';
 import 'package:lawyer_appointment_app/models/auth_model.dart';
 import 'package:lawyer_appointment_app/providers/dio_provider.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +19,35 @@ class _SignUpFormState extends State<SignUpForm> {
   final _emailController = TextEditingController();
   final _passController = TextEditingController();
   bool obsecurePass = true;
+
+  void showAlertDialog(String title, String content) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showSuccessDialog() {
+    showAlertDialog('Registration Successful', 'You have successfully registered.');
+  }
+
+  void showValidationErrorDialog() {
+    showAlertDialog('Validation Error', 'All fields are required.');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -38,6 +66,12 @@ class _SignUpFormState extends State<SignUpForm> {
               prefixIcon: Icon(Icons.person_outlined),
               prefixIconColor: Config.primaryColor,
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your username';
+              }
+              return null;
+            },
           ),
           Config.spaceSmall,
           TextFormField(
@@ -51,6 +85,12 @@ class _SignUpFormState extends State<SignUpForm> {
               prefixIcon: Icon(Icons.email_outlined),
               prefixIconColor: Config.primaryColor,
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your email address';
+              }
+              return null;
+            },
           ),
           Config.spaceSmall,
           TextFormField(
@@ -79,31 +119,39 @@ class _SignUpFormState extends State<SignUpForm> {
                             Icons.visibility_outlined,
                             color: Config.primaryColor,
                           ))),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please enter your password';
+              }
+              return null;
+            },
           ),
           Config.spaceSmall,
           Consumer<AuthModel>(
             builder: (context, auth, child) {
-              return Button(
+                            return Button(
                 width: double.infinity,
                 title: 'Sign Up',
                 onPressed: () async {
-                  final userRegistration = await DioProvider().registerUser(
-                      _nameController.text,
-                      _emailController.text,
-                      _passController.text);
+                  if (_formKey.currentState!.validate()) {
+                    final userRegistration = await DioProvider().registerUser(
+                        _nameController.text,
+                        _emailController.text,
+                        _passController.text);
+                        Navigator.of(context).pushReplacementNamed('/');
+                        showSuccessDialog();
 
-                  //if register success, proceed to login
-                  if (userRegistration) {
-                    final token = await DioProvider()
-                        .getToken(_emailController.text, _passController.text);
+                    // if register success, proceed to login
+                    if (userRegistration) {
+                      final token = await DioProvider()
+                          .getToken(_emailController.text, _passController.text);
 
-                    if (token) {
-                      auth.loginSuccess({}, {}); //update login status
-                      //rediret to main page
-                      MyApp.navigatorKey.currentState!.pushNamed('main');
+                      if (token) {
+                        auth.loginSuccess({}, {}); // update login status
+                      }
                     }
                   } else {
-                    print('register not successful');
+                    showValidationErrorDialog();
                   }
                 },
                 disable: false,

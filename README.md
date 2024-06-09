@@ -1,4 +1,4 @@
-# doctor_appointment_app
+# lawyer_appointment_app
 
 Identitas :
 1. Gian Vilcan Patra | 221511012
