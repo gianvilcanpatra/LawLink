@@ -5,25 +5,20 @@ Identitas :
 2. M Naufal Fadil Aziz | 221511016
 3. Arya Putra Kusumah | 221511044
 
-How To Run Project
-1. Active kan dulu php my admin serta buatkan databasenya
-2. Buka project laravel backend nya lalu run
-3. Buka project flutter frontend nya lalu run
+Cara Instalasi Aplikasi
+1. Install Visual Studio Code
+2. Install Flutter SDK
+3. Masuk ke directory project lawlink frontend
+4. run flutter pub get pada terminal
+5. Import database lawlink.sql dahulu
+6. file lawlink.sql ada di directory lawlink-laravel
+7. lalu copy paste env.example
+8. lalu rename menjadi .env
+9. pada .env bagian database samakan terlebih dahulu dengan nama database nya
+10. jalankan "php artisan key:generate" di terminal
+11. aktifkan apache dan MySQL pada XAMPP
+12. Jalankan "php artisan serve"
+13. Jika disuruh install beberapa package, install dahulu
+14. Pada flutter aktifkan dahulu emulator lalu run project
 
 
-
-
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
